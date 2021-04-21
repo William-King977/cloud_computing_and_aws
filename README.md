@@ -7,19 +7,27 @@ Amazon Web Services (AWS) is the world's most comprehensive and broadly adopted 
 
 ### Why do Companies use AWS?
 Compared to other cloud services providers:
-* Most functionality - AWS provides more services, and more features within those services, than any other cloud provider. This makes it faster, easier and more cost effective to move existing applications to the cloud.
-* Most secure - AWS is architected to be the most flexible and secure cloud computing environment. Their core infrastructure is built to satisfy the security requirements for the military, global banks, and other high-sensitivity organisations.
+* **Most functionality** - AWS provides more services, and more features within those services, than any other cloud provider. This makes it faster, easier and more cost effective to move existing applications to the cloud.
+* **Most secure** - AWS is architected to be the most flexible and secure cloud computing environment. Their core infrastructure is built to satisfy the security requirements for the military, global banks, and other high-sensitivity organisations.
 
 ## Cloud types
-* On premises/Private cloud (local machine etc.) - everything is stored locally. Companies on premise are responsible for the security of the data. If you lose the data, it's gone forever.
-* Hybrid cloud - Bridges the private cloud and public cloud. Sensitive information is kept in private cloud, everything else is stored in public cloud. Used by banks etc.
+* **On premises/Private cloud (local machine etc.)** - everything is stored locally. Companies on premise are responsible for the security of the data. If you lose the data, it's gone forever.
+* **Hybrid cloud** - Bridges the private cloud and public cloud. Sensitive information is kept in private cloud, everything else is stored in public cloud. Used by banks etc.
 
-## Cloud scaling and types
-* Autoscaling - servers run based on the number of users. They scale up as more users use the service and scale down as less users use it.
-* Horizontal (Up) - increase the size of the servers, or buying a larger server to accommodate the number of users
-* Vertical (Out) - increase number of servers, not good for maintenance costs
+## Cloud scaling types
+* **Autoscaling** - servers run based on the number of users. They scale up as more users use the service and scale down as less users use it.
+* **Horizontal (Up)** - increase the size of the servers, or buying a larger server to accommodate the number of users.
+* **Vertical (Out)** - increase number of servers, not good for maintenance costs.
 
 ## AWS Server conflagration 
 * Naming conventions for AWS Servers (Sparta Global only)
-  * Eng84_william_db
+  * Eng84_name_appType
+  * Eng84_william_db, Eng84_william_app, etc.
 * Security group acts as a firewall that controls the traffic for your instance (server) on the machine.
+
+## Architectures
+### Monolithic
+When all of the servers/instances are run on a single machine. Components of the program are interconnected and dependent on each other. If an update is made, the whole application has to re-run. Despite this, it's simpler to test than modular approaches (microservices), due to having fewer components as well as being simple to deploy. For example, running all vagrant virtual machines from a single Vagrantfile.
+
+### Two tier
+When the presentation layer (interface) runs on a client and a data layer/structure (database) gets stored on a server. It separates these two components into different locations. Having separate layers can improve performance and scalability.
