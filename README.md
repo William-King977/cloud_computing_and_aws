@@ -27,9 +27,10 @@ When all of the servers/instances are run from a single machine. Components of t
 When the presentation layer (interface) runs on a client and a data layer/structure (database) gets stored on a server. Basically, when each instance is run on a separate machine. It separates these two components into different locations. Having separate layers can improve performance and scalability.
 
 ## EC2
-* Elastic Compute Cloud
-* Infrastructure running on the cloud
-* Very flexible and scalable
+Elastic Compute Cloud provides scalable computing capacity in the AWS cloud. Effectively running virtual computing environments (instances) on the cloud. Some benefits:
+* Scalable - can scale up or down based on changes in requirements
+* No need for hardware up front - can develop and deploy applications faster
+* Secure - has security configurations with security groups
 
 ## Virtual Private Cloud (VPC)
 VPC is a service that lets you launch AWS resources in a logically isolated (secure) virtual network that you define. Services, such as EC2 instances, can be launched into the VPC.
