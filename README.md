@@ -42,7 +42,7 @@ VPC is a service that lets you launch AWS resources in a logically isolated (sec
 ## Subnets
 A subnet is a network inside a network. They make networks more efficient as network traffic can travel a shorter distance without passing through unnecessary routers to reach its destination. E.g. a subnet for teachers and another one for students.
 * Public subnets have their traffic routed to an internet gateway. 
-* Private subnets are not routed to an internet gateway, but its traffic is routed to a virtual private gateway for a Site-to-Site VPN connection (known as VPN-only subnet).
+* Private subnets are not routed to an internet gateway, but its traffic is routed to a virtual private gateway for a Site-to-Site VPN connection (known as VPN-only subnet). Limits access from the internet.
 
 ## Internet gateway
 An internet gateway is a horizontally scaled and highly available VPC component that allows communication between your VPC (and its components) and the internet.
@@ -113,7 +113,7 @@ Next, we'll create a separate route table for the private subnet.
    * Set the Name tag to `Eng84_william_private_rt`
    * Select your VPC
    * Click `Create`
-   * NOTE: This route table is not connected to the internet.
+   * NOTE: This route table will not be connected to the internet.
 2. With the new route table selected, select the `Subnet Associations` tab
 3. Click `Edit subnet associations` and do the following:
    * Select the PRIVATE subnet you have created
@@ -122,6 +122,7 @@ Next, we'll create a separate route table for the private subnet.
 Both route tables are now set up!
 
 ### Step 5: Creating the EC2 instances
+#### NOTE: Skip this step if you have created AMIs already.
 First, we'll create the instance for the app.
 1. Click `Launch Instance`
 2. Choose `Ubuntu Server 16.04 LTS (HVM), SSD Volume Type` as the Amazon Machine Image (AMI)
@@ -150,7 +151,7 @@ Now, we'll create an instance for the database.
 2. Repeat step 4, but change the subnet to your private one instead.
 3. Repeat steps 5 and 6. Adjust the name applicable for step 6.
 4. Repeat step 7, but replace the HTTP rule for All traffic:
-   * Custom Source: `59.84.1.0/24` (IPv4 for Public Subnet)
+   * Custom Source: `the public security group`
    * This only allows the app to access the database
 5. Repeat steps 8 and 9 as normal
 
@@ -211,30 +212,75 @@ The database instance is now accessible to the internet.
 7. Reconnect (SSH) into both instances.
 8. NOTE: for the app, one will need to run `seed.js`
 
-### Step 8: Creating a NACL to the VPC
+### Step 8: Creating a Public NACL for the VPC
 Ensure that you are in the VPC section (not EC2).
 1. Go to the `Network ACLs` section under `Security`
-2. Find the unnamed NACL that is associated with your VPC ID
-3. Rename it to `Eng84_william_nacl`
+2. Click `Create network ACL`
+3. Add the appropriate name and allocate the VPC, then create it
 
 Next, lets set the inbound rules for the NACL.
 1. With the NACL selected, click on the `Inbound rules` tab
 2. Click `Edit inbound rules`
 3. Remove the default rule and add the following rules:
-   * HTTP (80) with source `0.0.0.0/0` - this allows external HTTP traffic to enter the network
-   * SSH (22) with source `0.0.0.0/0` OR your_IP/32 - allows SSH connections to the VPC
-   * All traffic with source `59.84.0.0/16` (VPC's IPv4 CDIR) - allows subnets in the VPC to talk to each other
-   * NOTE: All rules should be `Allow` rules starting from 1
+   * 100: HTTP (80) with source `0.0.0.0/0` - this allows external HTTP traffic to enter the network
+   * 110: SSH (22) with source your_IP_address/32 - allows SSH connections to the VPC
+   * 120: Custom TCP with Port range `1024-65535` and source `0.0.0.0/0` - allows inbound return traffic from hosts on the internet that are responding to requests originating in the subnet
+   * NOTE: All rules should be `Allow` rules
 
 Now, lets set the outbound rules.
 1. Select the `Outbound rules` tab
 2. Click `Edit outbound rules`
-3. There should be one rule:
-   * All traffic with `0.0.0.0/0`
+3. There should be the following rules:
+   * 100: HTTP (80) with source `0.0.0.0/0`
+   * 110: Custom TCP with source private subnet CIDR block (`59.84.2.0/32` in this case) and port 27017 for outbound access to our MongoDB server in the private subnet
+   * 120: Custom TCP with port `1024-65535` and source `0.0.0.0/0` -  allow short lived ports between 1024-65535
    * NOTE: All rules should be `Allow` rules
 
+### Step 9: Creating a Private NACL for the VPC
+Create the private NACL and lets set the inbound rules for the NACL.
+1. With the NACL selected, click on the `Inbound rules` tab
+2. Click `Edit inbound rules`
+3. Remove the default rule and add the following rules:
+   * 100: Custom TCP with source public subnet CIDR block (`59.84.1.0/32` in this case) - this allows the app subnet to access the database subnet
+   * 110: SSH (22) with source your_IP_address/32 - allows SSH connections to the VPC
+   * NOTE: All rules should be `Allow` rules
+
+Now, lets set the outbound rules.
+1. Select the `Outbound rules` tab
+2. Click `Edit outbound rules`
+3. There should be the following rules:
+   * 100: All traffic with source `0.0.0.0/0` - allow all the traffic out
+   * NOTE: All rules should be `Allow` rules
+
+### Step 9: Assigning Subnets to NACLs
 Finally, lets assign the subnets to the NACL.
 1. Select the `Subnet associations` tab
 2. Select the `Edit subnet associations` tab
-3. Ensure both subnets are selected
+3. Select the public/private subnet, depending on the NACL
 
+## Creating Instance AMIs and New Instances (from those AMIs)
+### Step 1: Create AMIs of the Instances
+For each instance, do the following:
+1. Select the instance
+2. Select Action
+3. Select Image and templates, create image
+4. Enter name as instance with `_ami`
+5. Click Create image
+
+### Step 2: Create New Instances of the AMIs
+For each instance, follow the steps from `Step 5: Creating the EC2 instances` in the `AWS VPC configuration with Subnets` instructions, but change the following:
+1. When selecting your AMI, click on `My AMIs` on the side tab
+2. Search for your AMI and select it
+3. In the Security Group step, select the ones specific to your VPC IF you created them separately. Otherwise, create new ones.
+4. NOTE: creating instances with these AMIs will have everything installed (and running, like MongoDB)
+
+### Step 3: Connecting Everything
+There are a few things to change in the APP to get these AMI instances to work:
+1. Change the private database IP in the environment variable (in `~/.bashrc`) to the private database of the AMI.
+2. Exit and re-SSH into the app instance to 'save' the changes
+3. NOT SURE, but you may have to re-run `seed.js`
+4. Now, everything should work when running `node app.js`!
+
+### TOP TIP(s): 
+* **First iteration:** When you spin up the AMIs, do it in the default VPC and subnets first.
+* **Second iteration:** Spin up the AMIs in your own VPC and subnet
