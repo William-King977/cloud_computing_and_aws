@@ -28,9 +28,9 @@ When the presentation layer (interface) runs on a client and a data layer/struct
 
 ## EC2
 Elastic Compute Cloud provides scalable computing capacity in the AWS cloud. Effectively running virtual computing environments (instances) on the cloud. Some benefits:
-* Scalable - can scale up or down based on changes in requirements
-* No need for hardware up front - can develop and deploy applications faster
-* Secure - has security configurations with security groups
+* **Scalable** - can scale up or down based on changes in requirements
+* **No need for hardware up front** - can develop and deploy applications faster
+* **Secure** - has security configurations with security groups
 
 ## Virtual Private Cloud (VPC)
 VPC is a service that lets you launch AWS resources in a logically isolated (secure) virtual network that you define. Services, such as EC2 instances, can be launched into the VPC.
@@ -45,7 +45,7 @@ A subnet is a network inside a network. They make networks more efficient as net
 * Private subnets are not routed to an internet gateway, but its traffic is routed to a virtual private gateway for a Site-to-Site VPN connection (known as VPN-only subnet).
 
 ## Internet gateway
-An internet gateway is a horizontally scaled and highly available VPC component that allows communication between your VPC and the internet.
+An internet gateway is a horizontally scaled and highly available VPC component that allows communication between your VPC (and its components) and the internet.
 
 ## Route tables
 A route table contains a set of rules, called routes, that are used to determine where network traffic from your subnet or gateway is directed.
@@ -63,6 +63,11 @@ A network access control list is an additional layer of security for your VPC th
 * It's stateless - returning traffic must follow the rules
 * Rules are processed in order, starting with the lowest numbered rule, when deciding to allow traffic
 * Supports both allow and deny rules
+
+## Ephemeral/Dynamic Ports
+- Shortly lived ports, 'lives' for the duration of their use
+- Automatically allocated based on the demand
+- Range from 1024-65535
 
 ## AWS VPC configuration with Subnets
 ### Step 1: Create the VPC
@@ -159,6 +164,25 @@ Let's start with the app and import the files.
 6. Create the provisions file and copy, paste the contents. Adjust the directories as needed (hint: use `pwd`).
 7. Run the provision file using `./privision_file_name.sh`. Change permissions with `chmod` if needed.
 8. Run the environment variable command, so the app can connect to the database: `echo "export DB_HOST=mongodb://db_private_ip:27017/posts" >> ~/.bashrc`
+9. Do the following if you want to apply the reverse proxy manually:
+   * Execute: `sudo nano /etc/nginx/sites-available/default`
+   * Replace it all with the code below:
+     ```
+     server {
+         listen 80;
+
+         server_name _;
+
+         location / {
+             proxy_pass http://localhost:3000;
+             proxy_http_version 1.1;
+             proxy_set_header Upgrade $http_upgrade;
+             proxy_set_header Connection 'upgrade';
+             proxy_set_header Host $host;
+             proxy_cache_bypass $http_upgrade;
+         }
+     }
+     ```
 
 Next, we'll connect to the database instance.
 1. The database is not connected to the internet, so a proxy SSH is required.
