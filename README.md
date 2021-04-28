@@ -65,9 +65,15 @@ A network access control list is an additional layer of security for your VPC th
 * Supports both allow and deny rules
 
 ## Ephemeral/Dynamic Ports
-- Shortly lived ports, 'lives' for the duration of their use
-- Automatically allocated based on the demand
-- Range from 1024-65535
+* Shortly lived ports, 'lives' for the duration of their use
+* Automatically allocated based on the demand
+* Range from 1024-65535
+
+## Bastion Servers
+A bastion server is a special purpose instance (EC2) designed to be the primary access point from the internet and acts as a proxy to your other EC2 instances (e.g. the database). Some benefits include:
+* Provides access to a private network from an external network
+* Acts as a 'jump server' that allows you to SSH into EC2 instances in private subnets
+* Acts as a (secure) bridge between the private instances and the internet
 
 ## AWS VPC configuration with Subnets
 ### Step 1: Create the VPC
@@ -284,3 +290,39 @@ There are a few things to change in the APP to get these AMI instances to work:
 ### TOP TIP(s): 
 * **First iteration:** When you spin up the AMIs, do it in the default VPC and subnets first.
 * **Second iteration:** Spin up the AMIs in your own VPC and subnet
+
+## Creating a Bastion Server
+Even though we got *everything* working, we cannot SSH into our database instance because its in a private subnet. To solve this, we need to create a bastion server, also known as a jump box, so that we can log in to the bastion and then from there, access our database instance to perform updates.
+
+Follow the following to create a bastion server:
+1. Create a public subnet for the bastion server
+2. Create a Linux instance that acts as the bastion server
+   * Select your VPC and set the bastion subnet
+   * Set the Security Group rule as SSH with source `My IP`
+3. Change the following for the app and database instances:
+   * In Security Group inbound rules, add SSH with source bastion security group (ID)
+   * Add bastion subnet into the public route table (from the Subnet page)
+
+Now, we need to make some configurations before the bastion can SSH into our app and database. Do the following on your host machine:
+1. On the `~/.ssh` directory, execute `ssh-agent bash`
+2. Execute `ssh-add pem_file`
+3. Now, execute `ssh -A ubuntu@bastion_public_ip` to SSH into the bastion server (instance). NOTE: using this method of SSH will allow you to SSH into the app and database. The *regular* SSH method won't allow this.
+4. NOTE: the above needs to be done each time you open a new GitBash/Terminal window.
+
+Inside the bastion server, we need to add a `config` file in the `~/.ssh` directory:
+1. Execute `cd ~/.ssh`
+2. Execute `nano config`
+3. Copy and paste the following contents and adjust where applicable:
+   ```
+   Host db
+     Hostname db_private_ip
+     User ubuntu
+     Port 22
+   Host app
+     Hostname app_private_ip
+     User ubuntu
+     Port 22
+   ```
+4. Now, you can SSH into the app and database with `ssh app` and `ssh db` respectively.
+5. NOTE: you *may* have to `exit` on the host machine to stop some additional processes.
+
