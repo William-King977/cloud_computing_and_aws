@@ -25,6 +25,7 @@ When all of the servers/instances are run from a single machine. Components of t
 
 ### Two tier
 When the presentation layer (interface) runs on a client and a data layer/structure (database) gets stored on a server. Basically, when each instance is run on a separate machine. It separates these two components into different locations. Having separate layers can improve performance and scalability. Below is a diagram of configuring a two tier architecture in a AWS VPC:
+
 ![image](https://user-images.githubusercontent.com/44005332/116392059-e2ef9b80-a817-11eb-8b14-c21d7aeddd8d.png)
 
 ## EC2
