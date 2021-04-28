@@ -1,14 +1,14 @@
 # AWS VPC configuration with Subnets
 ### Step 1: Create the VPC
 1. Click `Your VPCs`, then `Create VPC`
-2. Change the VPC nametag to `Eng84_william_vpc`
+2. Change the VPC nametag to `eng84_william_vpc`
 3. Change IPv4 CIDR block to `0.0.0.0/16` where the first 2 numbers are unique e.g. `59.84.0.0/16`
 4. Click `Create VPC`
 
 ### Step 2: Create the Internet Gateway and Attach to VPC
 This needs to be done, so that your VPC can connect to the internet.
 1. Click `Internet Gateways`, then `Create internet gateway`
-2. Change the nametag to `Eng84_william_ig`
+2. Change the nametag to `eng84_william_ig`
 3. Click `Create Internet Gatway`
 4. Click `Actions`, then `Attach to VPC`
 5. Select the VPC you created, then click `Attach internet gateway`
@@ -16,7 +16,7 @@ This needs to be done, so that your VPC can connect to the internet.
 ### Step 3: Create the Subnets
 1. Click `Subnets`, then `Create subnet`
 2. Select your VPC
-3. Add the Subnet name as `Eng84_william_public_subnet`
+3. Add the Subnet name as `eng84_william_public_subnet`
 4. Availability zone to `1c`, but `No preference` is fine
 5. IPv4 CIDR block to `59.84.1.0/24` as per the VPC IP
 6. Click `Create Subnet`
@@ -26,7 +26,7 @@ This needs to be done, so that your VPC can connect to the internet.
 First, we'll find our route table and link the public subnet into it.
 1. Go on `Routing Tables`
 2. Click on the unnamed route tables until you find the one with your VPC
-3. Rename it to `Eng84_william_public_rt`
+3. Rename it to `eng84_william_public_rt`
 4. With the route table selected, select the `Routes` tab
 5. Click `Edit routes` and do the following:
    * Set the destination to `0.0.0.0/0`
@@ -39,7 +39,7 @@ First, we'll find our route table and link the public subnet into it.
 
 Next, we'll create a separate route table for the private subnet.
 1. Click `Create route table`, then do the following:
-   * Set the Name tag to `Eng84_william_private_rt`
+   * Set the Name tag to `eng84_william_private_rt`
    * Select your VPC
    * Click `Create`
    * NOTE: This route table will not be connected to the internet.
@@ -62,9 +62,9 @@ First, we'll create the instance for the app.
    * Enable `Auto-assign Public IP` for the app
 5. Skip `Add Storage` (keep defaults)
 6. Add a tag with the `Key` as `Name` and the value as shown below:
-   * `Eng84_name_appType`
-   * `Eng84_william_db`, `Eng84_william_app`, etc.
-7. Security group name should be `Eng84_william_app_sg` for the app
+   * `eng84_name_appType`
+   * `eng84_william_db`, `eng84_william_app`, etc.
+7. Security group name should be `eng84_william_app_sg` for the app
    * For the SSH rule:
      * Set to Port 22
      * Source: My IP
@@ -217,7 +217,7 @@ There are a few things to change in the APP to get these AMI instances to work:
 # Creating a Bastion Server
 Even though we got *everything* working, we cannot SSH into our database instance because its in a private subnet. To solve this, we need to create a bastion server, also known as a jump box, so that we can log in to the bastion and then from there, access our database instance to perform updates.
 
-Follow the following to create a bastion server:
+### Step 1: Creating the Bastion Instance
 1. Create a public subnet for the bastion server
 2. Create a Linux instance that acts as the bastion server
    * Select your VPC and set the bastion subnet
@@ -226,12 +226,14 @@ Follow the following to create a bastion server:
    * In Security Group inbound rules, add SSH with source bastion security group (ID)
    * Add bastion subnet into the public route table (from the Subnet page)
 
-Now, we need to make some configurations before the bastion can SSH into our app and database. Do the following on your host machine:
+### Step 2: Pre-SSH Configurations
+Before the bastion can SSH into our app and database. Do the following on your host machine:
 1. On the `~/.ssh` directory, execute `ssh-agent bash`
 2. Execute `ssh-add pem_file`
 3. Now, execute `ssh -A ubuntu@bastion_public_ip` to SSH into the bastion server (instance). NOTE: using this method of SSH will allow you to SSH into the app and database. The *regular* SSH method won't allow this.
 4. NOTE: the above needs to be done each time you open a new GitBash/Terminal window.
 
+### Step 3: Bastion Config File
 Inside the bastion server, we need to add a `config` file in the `~/.ssh` directory:
 1. Execute `cd ~/.ssh`
 2. Execute `nano config`
@@ -254,65 +256,66 @@ Below is a diagram of configuring a two tier architecture in a AWS VPC:
 
 ![image](https://user-images.githubusercontent.com/44005332/116392059-e2ef9b80-a817-11eb-8b14-c21d7aeddd8d.png)
 
-### Security Group Rules (Public)
+## Security Group Rules (Public)
 **Inbound rules:**
-|Type  |Protocol  |Port Range  |Source     |Description
-|:-    |:-        |:-          |:-         |:-
-|HTTP  |TCP       |80          |0.0.0.0/0  |HTTP access from the browser
-|HTTP  |TCP       |80          |::/0       |HTTP access from the browser
-|SSH   |TCP       |22          |My Ip      |SSH access from my machine
+|Type  |Protocol  |Port Range  |Source      |Description
+|:-    |:-        |:-          |:-          |:-
+|HTTP  |TCP       |80          |0.0.0.0/0   |HTTP access from the browser
+|HTTP  |TCP       |80          |::/0        |HTTP access from the browser
+|SSH   |TCP       |22          |My Ip       |SSH access from my machine
+|SSH   |TCP       |22          |Bastion SG  |SSH access from the bastion server
 
 **Outbound rules:**
 |Type         |Protocol  |Port Range  |Source     |Description
 |:-           |:-        |:-          |:-         |:-
 |All traffic  |All       |All         |0.0.0.0/0  |Allow all traffic out
 
-### Security Group Rules (Private)
+## Security Group Rules (Private)
 **Inbound rules:**
 |Type         |Protocol  |Port Range  |Source      |Description
 |:-           |:-        |:-          |:-          |:-
 |All traffic  |All       |All         |App SG      |Allow all traffic from the app
-|SSH          |TCP       |22          |Bastion SG  |SSH access from the Bastion server
+|SSH          |TCP       |22          |Bastion SG  |SSH access from the bastion server
 
 **Outbound rules:**
 |Type         |Protocol  |Port Range  |Source     |Description
 |:-           |:-        |:-          |:-         |:-
 |All traffic  |All       |All         |0.0.0.0/0  |Allow all traffic out
 
-### NACL Rules (Public)
+## NACL Rules (Public)
 **Inbound rules:**
 |Type         |Protocol  |Port Range  |Source                 |Allow/Deny  |Why rule is needed
 |:-           |:-        |:-          |:-                     |:-          |:-
 |HTTP         |TCP (6)   |80          |0.0.0.0/0              |Allow       |Allow access from the app
 |SSH          |TCP (6)   |22          |your_ip/32             |Allow       |Allows you SSH access
 |Custom TCP   |TCP (6)   |1024-65535  |your_ip/32             |Allow       |Allows inbound returning traffic
-|SSH          |TCP (6)   |22          |bastion_private_ip/32  |Allow       |Allows SSH access from Bastion
+|SSH          |TCP (6)   |22          |bastion_private_ip/32  |Allow       |Allows SSH access from bastion
 
 **Outbound rules:**
 |Type         |Protocol  |Port Range  |Source     |Allow/Deny  |Why rule is needed
 |:-           |:-        |:-          |:-         |:-          |:-
 |All traffic  |All       |All         |0.0.0.0/0  |Allow       |Allow all traffic out
 
-### NACL Rules (Private)
+## NACL Rules (Private)
 **Inbound rules:**
 |Type         |Protocol  |Port Range  |Source                      |Allow/Deny  |Why rule is needed
 |:-           |:-        |:-          |:-                          |:-          |:-
 |Custom TCP   |TCP (6)   |27017       |public_subnet_ipv4_CIDR/24  |Allow       |Allow access from the app
 |SSH          |TCP (6)   |22          |your_ip/32                  |Allow       |Allows you SSH access
-|SSH          |TCP (6)   |22          |bastion_private_ip/32       |Allow       |Allows SSH access from Bastion
+|SSH          |TCP (6)   |22          |bastion_private_ip/32       |Allow       |Allows SSH access from bastion
 
 **Outbound rules:**
 |Type         |Protocol  |Port Range  |Source     |Allow/Deny  |Why rule is needed
 |:-           |:-        |:-          |:-         |:-          |:-
 |All traffic  |All       |All         |0.0.0.0/0  |Allow       |Allow all traffic out
 
-### Route Table Rules (Public)
+## Route Table Rules (Public)
 |Destination  |Target    |Subnets
 |:-           |:-        |:-      
 |VPC_IP/16    |Local     |Public
 |0.0.0.0/0    |Internet  |Public 
 
-### Route Table Rules (Private)
+## Route Table Rules (Private)
 |Destination  |Target    |Subnets
 |:-           |:-        |:-      
 |VPC_IP/16    |Local     |Private

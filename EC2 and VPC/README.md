@@ -1,7 +1,7 @@
 # Virtual Private Cloud (VPC)
 VPC is a service that lets you launch AWS resources in a logically isolated (secure) virtual network that you define. Services, such as EC2 instances, can be launched into the VPC.
 
-## Benefits of VPC
+### Benefits of VPC
 * **Secure and monitored network connections** - inbound and outbound filtering can be performed at the instance and subnet level.
 * **Customisable virtual network** - IP address ranges, subnets, and route tables can be configured to any available gateways.
 
