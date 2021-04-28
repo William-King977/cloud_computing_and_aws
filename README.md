@@ -258,7 +258,7 @@ Now, lets set the outbound rules.
    * 100: All traffic with source `0.0.0.0/0` - allow all the traffic out
    * NOTE: All rules should be `Allow` rules
 
-### Step 9: Assigning Subnets to NACLs
+### Step 10: Assigning Subnets to NACLs
 Finally, lets assign the subnets to the NACL.
 1. Select the `Subnet associations` tab
 2. Select the `Edit subnet associations` tab
