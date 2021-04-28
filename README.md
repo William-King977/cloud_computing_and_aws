@@ -169,7 +169,7 @@ Let's start with the app and import the files.
 4. Click `Connect`, then run the SSH command given from the `SSH client` instructions 
 5. If you are asked for a finger print, type yes.
 6. Create the provisions file and copy, paste the contents. Adjust the directories as needed (hint: use `pwd`).
-7. Run the provision file using `./privision_file_name.sh`. Change permissions with `chmod` if needed.
+7. Run the provision file using `./provision_file_name.sh`. Change permissions with `chmod` if needed.
 8. Run the environment variable command, so the app can connect to the database: `echo "export DB_HOST=mongodb://db_private_ip:27017/posts" >> ~/.bashrc`
 9. Do the following if you want to apply the reverse proxy manually:
    * Execute: `sudo nano /etc/nginx/sites-available/default`
