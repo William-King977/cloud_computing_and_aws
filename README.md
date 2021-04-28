@@ -296,28 +296,45 @@ Below is a diagram of configuring a two tier architecture in a AWS VPC:
 
 ![image](https://user-images.githubusercontent.com/44005332/116392059-e2ef9b80-a817-11eb-8b14-c21d7aeddd8d.png)
 
-### Security Group Inbound Rules
-Public:
-* 
+### Security Group Rules (Public)
+The inbound rules:
+|Type  |Protocol  |Port Range  |Source     |Description
+|:-    |:-        |:-          |:-         |:-
+|HTTP  |TCP       |80          |0.0.0.0/0  |HTTP access from the browser
+|HTTP  |TCP       |80          |::/0       |HTTP access from the browser
+|SSH   |TCP       |22          |My Ip      |SSH access from my machine
 
-Private:
-*
+The outbound rules:
+|Type         |Protocol  |Port Range  |Source     |Description
+|:-           |:-        |:-          |:-         |:-
+|All traffic  |All       |All         |0.0.0.0/0  |Allow all traffic out
 
-### Security Group Outbound Rules
-Public:
-* 
+### Security Group Rules (Private)
+The inbound rules:
+|Type         |Protocol  |Port Range  |Source      |Description
+|:-           |:-        |:-          |:-          |:-
+|All traffic  |All       |All         |App SG      |Allow all traffic from the app
+|SSH          |TCP       |22          |Bastion SG  |SSH access from the bastion server
 
-Private:
-*
+The outbound rules:
+|Type         |Protocol  |Port Range  |Source     |Description
+|:-           |:-        |:-          |:-         |:-
+|All traffic  |All       |All         |0.0.0.0/0  |Allow all traffic out
 
-### NACL Rules
-Public:
-*
+### NACL Rules (Public)
 
-Private:
+### NACL Rules (Private)
 
-### Route Table Rules
+### Route Table Rules (Public)
+|Destination  |Target    |Subnets
+|:-           |:-        |:-      
+|VPC_IP/16    |Local     |Public
+|0.0.0.0/0    |Internet  |Public 
 
+### Rute Table Rules (Private)
+|Destination  |Target    |Subnets
+|:-           |:-        |:-      
+|VPC_IP/16    |Local     |Private
 
 ## Creating a Bastion Server
 Even though we got *everything* working, we cannot SSH into our database instance because its in a private subnet. To solve this, we need to create a bastion server, also known as a jump box, so that we can log in to the bastion and then from there, access our database instance to perform updates.
