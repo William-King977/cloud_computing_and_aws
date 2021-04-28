@@ -24,9 +24,7 @@ Compared to other cloud services providers:
 When all of the servers/instances are run from a single machine. Components of the program are interconnected and dependent on each other. If an update is made, the whole application has to re-run. Despite this, it's simpler to test than modular approaches (microservices), due to having fewer components as well as being simple to deploy. For example, running all vagrant virtual machines from a single Vagrantfile.
 
 ### Two tier
-When the presentation layer (interface) runs on a client and a data layer/structure (database) gets stored on a server. Basically, when each instance is run on a separate machine. It separates these two components into different locations. Having separate layers can improve performance and scalability. Below is a diagram of configuring a two tier architecture in a AWS VPC:
-
-![image](https://user-images.githubusercontent.com/44005332/116392059-e2ef9b80-a817-11eb-8b14-c21d7aeddd8d.png)
+When the presentation layer (interface) runs on a client and a data layer/structure (database) gets stored on a server. Basically, when each instance is run on a separate machine. It separates these two components into different locations. Having separate layers can improve performance and scalability.
 
 ## EC2
 Elastic Compute Cloud provides scalable computing capacity in the AWS cloud. Effectively running virtual computing environments (instances) on the cloud. Some benefits:
@@ -292,6 +290,34 @@ There are a few things to change in the APP to get these AMI instances to work:
 ### TOP TIP(s): 
 * **First iteration:** When you spin up the AMIs, do it in the default VPC and subnets first.
 * **Second iteration:** Spin up the AMIs in your own VPC and subnet
+
+## AWS VPC Diagram
+Below is a diagram of configuring a two tier architecture in a AWS VPC:
+
+![image](https://user-images.githubusercontent.com/44005332/116392059-e2ef9b80-a817-11eb-8b14-c21d7aeddd8d.png)
+
+### Security Group Inbound Rules
+Public:
+* 
+
+Private:
+*
+
+### Security Group Outbound Rules
+Public:
+* 
+
+Private:
+*
+
+### NACL Rules
+Public:
+*
+
+Private:
+
+### Route Table Rules
+
 
 ## Creating a Bastion Server
 Even though we got *everything* working, we cannot SSH into our database instance because its in a private subnet. To solve this, we need to create a bastion server, also known as a jump box, so that we can log in to the bastion and then from there, access our database instance to perform updates.
