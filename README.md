@@ -332,7 +332,7 @@ Below is a diagram of configuring a two tier architecture in a AWS VPC:
 
 **Outbound rules:**
 |Type         |Protocol  |Port Range  |Source     |Allow/Deny  |Why rule is needed
-|:-           |:-        |:-          |:-         |:-          |
+|:-           |:-        |:-          |:-         |:-          |:-
 |All traffic  |All       |All         |0.0.0.0/0  |Allow       |Allow all traffic out
 
 ### NACL Rules (Private)
@@ -345,7 +345,7 @@ Below is a diagram of configuring a two tier architecture in a AWS VPC:
 
 **Outbound rules:**
 |Type         |Protocol  |Port Range  |Source     |Allow/Deny  |Why rule is needed
-|:-           |:-        |:-          |:-         |:-          |
+|:-           |:-        |:-          |:-         |:-          |:-
 |All traffic  |All       |All         |0.0.0.0/0  |Allow       |Allow all traffic out
 
 ### Route Table Rules (Public)
