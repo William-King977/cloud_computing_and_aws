@@ -59,7 +59,7 @@ First, we'll create the instance for the app.
 4. On Configure Instance Details:
    * Change the VPC to your VPC
    * Change subnet to your public subnet
-   * Enable `Auto-assign Public IP` for the app
+   * Enable `Auto-assign Public IP`
 5. Skip `Add Storage` (keep defaults)
 6. Add a tag with the `Key` as `Name` and the value as shown below:
    * `eng84_name_appType`
@@ -80,7 +80,7 @@ Now, we'll create an instance for the database.
 2. Repeat step 4, but change the subnet to your private one instead.
 3. Repeat steps 5 and 6. Adjust the name applicable for step 6.
 4. Repeat step 7, but replace the HTTP rule for All traffic:
-   * Custom Source: `the public security group`
+   * Custom Source: `the app's security group`
    * This only allows the app to access the database
 5. Repeat steps 8 and 9 as normal
 
@@ -88,45 +88,45 @@ Now, we'll create an instance for the database.
 Let's start with the app and import the files.
 1. Go to the directory before the app folder.
 2. Execute this command: `scp -i ~/.ssh/DevOpsStudent.pem -r app/ ubuntu@app_ec2_public_ip:~/app/`
-3. Change to the `~/.ssh`
-4. Click `Connect`, then run the SSH command given from the `SSH client` instructions 
-5. If you are asked for a finger print, type yes.
-6. For the provisions file, ensure it is in the `UNIX` format. There are a few options:
+3. For the provisions file, ensure it is in the `UNIX` format. There are a few options:
    * `Sublime Text`: click `View` > `Line Endings` > `Unix`.
    * `Notepad++`: on the bottom-right corner, right-click to select the `Unix (LF)` option.
    * `VS Code`: on the bottom-right corner, ensure `LF` is selected instead of `CTLF`.
    * Ensure you save the file after the change.
-7. Go to the directory where the provision file is and execute: `scp -i ~/.ssh/DevOpsStudent.pem -r provision_name.sh ubuntu@app_public_ip:~/`. Now, it's time to SSH into the app.
-8. In the instance, adjust the directories in the provision file as needed (hint: use `pwd`).
+4. Go to the directory where the provision file is and execute: `scp -i ~/.ssh/DevOpsStudent.pem -r provision_name.sh ubuntu@app_public_ip:~/`. Now, it's time to SSH into the app.
+5. Change to the `~/.ssh` directory
+6. On the AWS instance page, click `Connect`, then run the SSH command given from the `SSH client` instructions 
+7. If you are asked for a finger print, type yes.
+8. Inside the instance, adjust the directories in the provision file as needed (hint: use `pwd`).
 9. Run the provision file using `./provision_name.sh`. Change permissions with `chmod` if needed.
    * If you cannot execute it (no such file/directory), enter `sed -i -e 's/\r$//' provision_name.sh`, then run the above again.
    * If all else fails, create the provisions file and copy, paste the contents.
 10. Run the environment variable command, so the app can connect to the database: `echo "export DB_HOST=mongodb://db_private_ip:27017/posts" >> ~/.bashrc`
 11. Do the following if you want to apply the reverse proxy manually:
-   * Execute: `sudo nano /etc/nginx/sites-available/default`
-   * Replace it all with the code below:
-     ```
-     server {
-         listen 80;
+    * Execute: `sudo nano /etc/nginx/sites-available/default`
+    * Replace it all with the code below:
+      ```
+      server {
+          listen 80;
 
-         server_name _;
+          server_name _;
 
-         location / {
-             proxy_pass http://localhost:3000;
-             proxy_http_version 1.1;
-             proxy_set_header Upgrade $http_upgrade;
-             proxy_set_header Connection 'upgrade';
-             proxy_set_header Host $host;
-             proxy_cache_bypass $http_upgrade;
-         }
-     }
-     ```
+          location / {
+              proxy_pass http://localhost:3000;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection 'upgrade';
+              proxy_set_header Host $host;
+              proxy_cache_bypass $http_upgrade;
+          }
+      }
+      ```
 
 Next, we'll connect to the database instance.
 1. The database is not connected to the internet, so a proxy SSH is required.
 2. First, we need the Public IPv4 address of our app.
 3. Next, we need the Private IPv4 address of our database.
-2. Execute this command to SSH into the database: `ssh -i ~/.ssh/DevOpsStudent.pem -o ProxyCommand="ssh -i ~/.ssh/DevOpsStudent.pem -W %h:%p ubuntu@app_public_ip" ubuntu@db_private_ip`
+4. Execute this command to SSH into the database: `ssh -i ~/.ssh/DevOpsStudent.pem -o ProxyCommand="ssh -i ~/.ssh/DevOpsStudent.pem -W %h:%p ubuntu@app_public_ip" ubuntu@db_private_ip`
 
 ### Step 7: Updating the database instance
 First, modify the security group.
@@ -235,7 +235,7 @@ Even though we got *everything* working, we cannot SSH into our database instanc
    * Add bastion subnet into the public route table (from the Subnet page)
 
 ### Step 2: Pre-SSH Configurations
-Before the bastion can SSH into our app and database. Do the following on your host machine:
+Before the bastion can SSH into our app and database, do the following on your host machine:
 1. On the `~/.ssh` directory, execute `ssh-agent bash`
 2. Execute `ssh-add pem_file`
 3. Now, execute `ssh -A ubuntu@bastion_public_ip` to SSH into the bastion server (instance). NOTE: using this method of SSH will allow you to SSH into the app and database. The *regular* SSH method won't allow this.
