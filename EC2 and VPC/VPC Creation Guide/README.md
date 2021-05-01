@@ -91,10 +91,18 @@ Let's start with the app and import the files.
 3. Change to the `~/.ssh`
 4. Click `Connect`, then run the SSH command given from the `SSH client` instructions 
 5. If you are asked for a finger print, type yes.
-6. Create the provisions file and copy, paste the contents. Adjust the directories as needed (hint: use `pwd`).
-7. Run the provision file using `./provision_file_name.sh`. Change permissions with `chmod` if needed.
-8. Run the environment variable command, so the app can connect to the database: `echo "export DB_HOST=mongodb://db_private_ip:27017/posts" >> ~/.bashrc`
-9. Do the following if you want to apply the reverse proxy manually:
+6. For the provisions file, ensure it is in the `UNIX` format. There are a few options:
+   * `Sublime Text`: click `View` > `Line Endings` > `Unix`.
+   * `Notepad++`: on the bottom-right corner, right-click to select the `Unix (LF)` option.
+   * `VS Code`: on the bottom-right corner, ensure `LF` is selected instead of `CTLF`.
+   * Ensure you save the file after the change.
+7. Go to the directory where the provision file is and execute: `scp -i ~/.ssh/DevOpsStudent.pem -r provision_name.sh ubuntu@app_public_ip:~/`. Now, it's time to SSH into the app.
+8. In the instance, adjust the directories in the provision file as needed (hint: use `pwd`).
+9. Run the provision file using `./provision_name.sh`. Change permissions with `chmod` if needed.
+   * If you cannot execute it (no such file/directory), enter `sed -i -e 's/\r$//' provision_name.sh`, then run the above again.
+   * If all else fails, create the provisions file and copy, paste the contents.
+10. Run the environment variable command, so the app can connect to the database: `echo "export DB_HOST=mongodb://db_private_ip:27017/posts" >> ~/.bashrc`
+11. Do the following if you want to apply the reverse proxy manually:
    * Execute: `sudo nano /etc/nginx/sites-available/default`
    * Replace it all with the code below:
      ```
@@ -134,12 +142,12 @@ Next, go to the VPC to modify the route table subnet associations.
 
 The database instance is now accessible to the internet.
 1. SSH into the database instance just like your app instance.
-2. Create the provisions file and copy, paste the contents.
-3. Run the provisions file
+2. Import the provisions file just like the app (no need to modify the contents) 
+3. Run the provisions file 
 4. With the operations complete, remove the private subnet from the public route table.
 5. Remove the HTTP rule from the security group.
-7. Reconnect (SSH) into both instances.
-8. NOTE: for the app, one will need to run `seed.js`
+6. Reconnect (SSH) into both instances.
+7. NOTE: for the app, one will need to run `seed.js`
 
 ### Step 8: Creating a Public NACL for the VPC
 Ensure that you are in the VPC section (not EC2).
