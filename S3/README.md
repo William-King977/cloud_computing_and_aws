@@ -11,8 +11,8 @@ S3 is provided by AWS and is used to store and retrieve any amount of data, at a
 ## S3 Configurations
 * In order to have AWSCLI, we need to install the required dependencies (inside an EC2 instance):
   * Python (`sudo apt-get install python`)
-  * Pip
-  * `sudo apt-get install awscli`
+  * Pip (`sudo apt-get install pip`)
+  * AWSCLI (`sudo apt-get install awscli`)
 * Configure AWSCLI with AWS keys to authenticate the access from our machine to S3
   * Enter `aws configure`
   * You will be prompt to enter your:
@@ -22,10 +22,10 @@ S3 is provided by AWS and is used to store and retrieve any amount of data, at a
     * Default output format: json
 
 ## S3 Commands
-* See all buckets: `aws s3 ls`
-* Create bucket: `aws s3 mb s3://eng84-william-s3 --region eu-west-1`
-* Add things to a bucket: `aws s3 cp README.md s3://eng84-william-s3`
-* Download README.md from the remote bucket (adjust permissions first): `aws s3 sync s3://eng84-william-s3 README.md`
-* Delete README.md from bucket: `aws s3 rm s3://eng84-william-s3/README.md`
-* Delete the bucket: `aws s3 rb s3://eng84-william-s3`
-* Delete the bucket AND its contents: `aws s3 rb s3://eng84-william-s3 --force`
+* `aws s3 ls` - lists all the buckets
+* `aws s3 mb s3://eng84-william-s3 --region eu-west-1` - creates a bucket called `eng84-william-s3`. Region isn't necessary.
+* `aws s3 cp README.md s3://eng84-william-s3` - adds a `README.md` file to the bucket
+* `aws s3 sync s3://eng84-william-s3 README.md` - downloads the `README.md` file from the remote bucket (adjust permissions first)
+* `aws s3 rm s3://eng84-william-s3/README.md` - deletes `README.md` from the bucket
+* `aws s3 rb s3://eng84-william-s3` - deletes the bucket
+* `aws s3 rb s3://eng84-william-s3 --force` - deletes the bucket AND its contents
