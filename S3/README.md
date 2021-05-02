@@ -10,6 +10,7 @@ S3 is provided by AWS and is used to store and retrieve any amount of data, at a
 
 ## S3 Configurations
 * In order to have AWSCLI, we need to install the required dependencies (inside an EC2 instance):
+  * Update Ubuntu with `sudo apt-get update -y`, then `sudo apt-get upgrade -y`
   * Python (`sudo apt-get install python`)
   * Pip (`sudo apt-get install pip`)
   * AWSCLI (`sudo apt-get install awscli`)
