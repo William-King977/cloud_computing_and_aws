@@ -1,59 +1,59 @@
 # AWS VPC configuration with Subnets
 ### Step 1: Create the VPC
-1. Click `Your VPCs`, then `Create VPC`
+1. Click **Your VPCs** > **Create VPC**
 2. Change the VPC nametag to `eng84_william_vpc`
-3. Change IPv4 CIDR block to `0.0.0.0/16` where the first 2 numbers are unique e.g. `59.84.0.0/16`
-4. Click `Create VPC`
+3. Change IPv4 CIDR block to `0.0.0.0/16` where the first 2 numbers are modified e.g. `59.59.0.0/16`
+4. Click **Create VPC**
 
 ### Step 2: Create the Internet Gateway and Attach to VPC
 This needs to be done, so that your VPC can connect to the internet.
-1. Click `Internet Gateways`, then `Create internet gateway`
+1. Click **Internet Gateways** > **Create internet gateway**
 2. Change the nametag to `eng84_william_ig`
-3. Click `Create Internet Gatway`
-4. Click `Actions`, then `Attach to VPC`
-5. Select the VPC you created, then click `Attach internet gateway`
+3. Click **Create Internet Gatway**
+4. Click **Actions** > **Attach to VPC**
+5. Select the VPC you created, then click **Attach internet gateway**
 
 ### Step 3: Create the Subnets
-1. Click `Subnets`, then `Create subnet`
+1. Click **Subnets** > **Create subnet**
 2. Select your VPC
 3. Add the Subnet name as `eng84_william_public_subnet`
 4. Availability zone to `1c`, but `No preference` is fine
-5. IPv4 CIDR block to `59.84.1.0/24` as per the VPC IP
-6. Click `Create Subnet`
+5. IPv4 CIDR block to `59.59.1.0/24` as per the VPC IP
+6. Click **Create Subnet**
 7. Repeat the above steps for the Private Subnet, but with the applicable name and the third number of the IPv4 CIDR block must be unique.
 
 ### Step 4: Setting up Routing Tables
 First, we'll find our route table and link the public subnet into it.
-1. Go on `Routing Tables`
+1. Go on **Routing Tables**
 2. Click on the unnamed route tables until you find the one with your VPC
 3. Rename it to `eng84_william_public_rt`
-4. With the route table selected, select the `Routes` tab
-5. Click `Edit routes` and do the following:
+4. With the route table selected, select the **Routes** tab
+5. Click **Edit routes** and do the following:
    * Set the destination to `0.0.0.0/0`
    * Set the target to `Internet Gateway`, then select your internet gateway
    * Save the configurations
-6. Select the `Subnet Associations` tab to link the Public Subnet
-7. Click `Edit subnet associations` and do the following:
+6. Select the **Subnet Associations** tab to link the Public Subnet
+7. Click **Edit subnet associations** and do the following:
    * Select the public subnet you have created
-   * Click `Save` 
+   * Click **Save** 
 
 Next, we'll create a separate route table for the private subnet.
-1. Click `Create route table`, then do the following:
+1. Click **Create route table**, then do the following:
    * Set the Name tag to `eng84_william_private_rt`
    * Select your VPC
-   * Click `Create`
+   * Click **Create**
    * NOTE: This route table will not be connected to the internet.
-2. With the new route table selected, select the `Subnet Associations` tab
-3. Click `Edit subnet associations` and do the following:
+2. With the new route table selected, select the **Subnet Associations** tab
+3. Click **Edit subnet associations** and do the following:
    * Select the PRIVATE subnet you have created
-   * Click `Save`
+   * Click **Save**
 
 Both route tables are now set up!
 
 ### Step 5: Creating the EC2 instances
 #### NOTE: Skip this step if you have created AMIs already.
 First, we'll create the instance for the app.
-1. Click `Launch Instance`
+1. Click **Launch Instance**
 2. Choose `Ubuntu Server 16.04 LTS (HVM), SSD Volume Type` as the Amazon Machine Image (AMI)
 3. Choose `t2.micro` as the instance type (the default)
 4. On Configure Instance Details:
@@ -64,14 +64,9 @@ First, we'll create the instance for the app.
 6. Add a tag with the `Key` as `Name` and the value as shown below:
    * `eng84_name_appType`
    * `eng84_william_db`, `eng84_william_app`, etc.
-7. Security group name should be `eng84_william_app_sg` for the app
-   * For the SSH rule:
-     * Set to Port 22
-     * Source: My IP
-     * Description: My IP
-   * Add another rule for HTTP:
-     * Set to Port 80
-     * Custom Source: `0.0.0.0/0, ::/0` (default)
+7. Security group name should be `eng84_william_app_sg` for the app and have the following rules:
+   * SSH (22) with source `My IP` - allows you to SSH
+   * HTTP (80) with source `Anywhere` - allow access to the app (on the browser)
 8. Review and Launch
 9. Select the existing DevOpsStudent key:pair option for SSH
 
@@ -89,13 +84,13 @@ Let's start with the app and import the files.
 1. Go to the directory before the app folder.
 2. Execute this command: `scp -i ~/.ssh/DevOpsStudent.pem -r app/ ubuntu@app_ec2_public_ip:~/app/`
 3. For the provisions file, ensure it is in the `UNIX` format. There are a few options:
-   * `Sublime Text`: click `View` > `Line Endings` > `Unix`.
-   * `Notepad++`: on the bottom-right corner, right-click to select the `Unix (LF)` option.
-   * `VS Code`: on the bottom-right corner, ensure `LF` is selected instead of `CTLF`.
+   * **Sublime Text**: click **View** > **Line Endings** > **Unix**.
+   * **Notepad++**: on the bottom-right corner, right-click to select the `Unix (LF)` option.
+   * **VS Code**, **Atom**: on the bottom-right corner, ensure `LF` is selected instead of `CTLF`.
    * Ensure you save the file after the change.
 4. Go to the directory where the provision file is and execute: `scp -i ~/.ssh/DevOpsStudent.pem -r provision_name.sh ubuntu@app_public_ip:~/`. Now, it's time to SSH into the app.
 5. Change to the `~/.ssh` directory
-6. On the AWS instance page, click `Connect`, then run the SSH command given from the `SSH client` instructions 
+6. On the AWS instance page, click **Connect**, then run the SSH command given from the **SSH client** instructions 
 7. If you are asked for a finger print, type yes.
 8. Inside the instance, adjust the directories in the provision file as needed (hint: use `pwd`).
 9. Run the provision file using `./provision_name.sh`. Change permissions with `chmod` if needed.
@@ -130,14 +125,14 @@ Next, we'll connect to the database instance.
 
 ### Step 7: Updating the database instance
 First, modify the security group.
-1. Go on `Security`, then click the security group
-2. Click `Edit inbound rules`
+1. Go on **Security**, then click the security group
+2. Click **Edit inbound rules**
 3. Add a HTTP rule and set the Source to `Anywhere`
 
 Next, go to the VPC to modify the route table subnet associations.
-1. Click `Route Tables`
+1. Click **Route Tables**
 2. Select your public route table
-3. With your public route table selected, click the `Subnet Associations` tab
+3. With your public route table selected, click the **Subnet Associations** tab
 4. Edit the subnet associations, then select the private subnet.
 
 The database instance is now accessible to the internet.
@@ -151,64 +146,61 @@ The database instance is now accessible to the internet.
 
 ### Step 8: Creating a Public NACL for the VPC
 Ensure that you are in the VPC section (not EC2).
-1. Go to the `Network ACLs` section under `Security`
-2. Click `Create network ACL`
+1. Go to the **Network ACLs** section under **Security**
+2. Click **Create network ACL**
 3. Add the appropriate name and allocate the VPC, then create it
 
 Next, lets set the inbound rules for the NACL.
-1. With the NACL selected, click on the `Inbound rules` tab
-2. Click `Edit inbound rules`
+1. With the NACL selected, click on the **Inbound rules** tab
+2. Click **Edit inbound rules**
 3. Remove the default rule and add the following rules:
    * 100: HTTP (80) with source `0.0.0.0/0` - this allows external HTTP traffic to enter the network
    * 110: SSH (22) with source your_IP_address/32 - allows SSH connections to the VPC
    * 120: Custom TCP with Port range `1024-65535` and source `0.0.0.0/0` - allows inbound return traffic from hosts on the internet that are responding to requests originating in the subnet
-   * NOTE: All rules should be `Allow` rules
+   * NOTE: All rules should be **Allow** rules
 
 Now, lets set the outbound rules.
-1. Select the `Outbound rules` tab
-2. Click `Edit outbound rules`
+1. Select the **Outbound rules** tab
+2. Click **Edit outbound rules**
 3. There should be the following rules:
-   * 100: HTTP (80) with source `0.0.0.0/0`
-   * 110: Custom TCP with source private subnet CIDR block (`59.84.2.0/32` in this case) and port 27017 for outbound access to our MongoDB server in the private subnet
-   * 120: Custom TCP with port `1024-65535` and source `0.0.0.0/0` -  allow short lived ports between 1024-65535
-   * NOTE: All rules should be `Allow` rules
+   * 100: All traffic with source `0.0.0.0/0` - allow all the traffic out
+   * NOTE: All rules should be **Allow** rules
 
 ### Step 9: Creating a Private NACL for the VPC
 Create the private NACL and lets set the inbound rules for the NACL.
-1. With the NACL selected, click on the `Inbound rules` tab
-2. Click `Edit inbound rules`
+1. With the NACL selected, click on the **Inbound rules** tab
+2. Click **Edit inbound rules**
 3. Remove the default rule and add the following rules:
-   * 100: Custom TCP with source public subnet CIDR block (`59.84.1.0/32` in this case) - this allows the app subnet to access the database subnet
+   * 100: Custom TCP with source public subnet CIDR block (`59.59.1.0/32` in this case) - this allows the app subnet to access the database subnet
    * 110: SSH (22) with source your_IP_address/32 - allows SSH connections to the VPC
-   * NOTE: All rules should be `Allow` rules
+   * NOTE: All rules should be **Allow** rules
 
 Now, lets set the outbound rules.
-1. Select the `Outbound rules` tab
-2. Click `Edit outbound rules`
+1. Select the **Outbound rules** tab
+2. Click **Edit outbound rules**
 3. There should be the following rules:
    * 100: All traffic with source `0.0.0.0/0` - allow all the traffic out
    * NOTE: All rules should be `Allow` rules
 
 ### Step 10: Assigning Subnets to NACLs
 Finally, lets assign the subnets to the NACL.
-1. Select the `Subnet associations` tab
-2. Select the `Edit subnet associations` tab
+1. Select the **Subnet associations** tab
+2. Select the **Edit subnet associations** tab
 3. Select the public/private subnet, depending on the NACL
 
 # Creating Instance AMIs and New Instances (from those AMIs)
 ### Step 1: Create AMIs of the Instances
 For each instance, do the following:
 1. Select the instance
-2. Select Action
-3. Select Image and templates, create image
-4. Enter name as instance with `_ami`
-5. Click Create image
+2. Select **Actions** > **Image and templates** > **Create image**
+3. Enter name as instance with `_ami`
+4. Click **Create image**
 
 ### Step 2: Create New Instances of the AMIs
-For each instance, follow the steps from `Step 5: Creating the EC2 instances` in the `AWS VPC configuration with Subnets` instructions, but change the following:
-1. When selecting your AMI, click on `My AMIs` on the side tab
+For each instance, follow the steps from **Step 5: Creating the EC2 instances** in the **AWS VPC configuration with Subnets** instructions, but change the following:
+1. When selecting your AMI, click on **My AMIs** on the side tab
 2. Search for your AMI and select it
-3. In the Security Group step, select the ones specific to your VPC IF you created them separately. Otherwise, create new ones.
+3. In the Security Group step, select the ones specific to your VPC if you created them separately. Otherwise, create new ones.
 4. NOTE: creating instances with these AMIs will have everything installed (and running, like MongoDB)
 
 ### Step 3: Connecting Everything
@@ -219,8 +211,8 @@ There are a few things to change in the APP to get these AMI instances to work:
 4. Now, everything should work when running `node app.js`!
 
 ### TOP TIP(s): 
-* **First iteration:** When you spin up the AMIs, do it in the default VPC and subnets first.
-* **Second iteration:** Spin up the AMIs in your own VPC and subnet
+* **First iteration:** when you spin up the AMIs, do it in the default VPC and subnets first.
+* **Second iteration:** spin up the AMIs in your own VPC and subnet
 
 # Creating a Bastion Server
 Even though we got *everything* working, we cannot SSH into our database instance because its in a private subnet. To solve this, we need to create a bastion server, also known as a jump box, so that we can log in to the bastion and then from there, access our database instance to perform updates.

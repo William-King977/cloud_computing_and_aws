@@ -26,7 +26,7 @@ s3.meta.client.upload_file("files/WSM-2010-2020.txt", "eng84-william-bucket", "W
 ```
 
 ### Downloading files
-To download a file, state the bucket, file name and file directory to save the file in. Keep the directory as the file name if you want to save it in the current directory. If the file already exists in your local machine, it will be overwritten.
+To download a file, state the bucket, file name and file directory to save the file in. Keep the directory as the file name if you want to save it in the current directory. If the file already exists in your local machine directory, it will be overwritten.
 ```python
 s3.meta.client.download_file("eng84-william-bucket", "WSM-2010-2020.txt", "files/WSM-2010-2020.txt")
 ```
