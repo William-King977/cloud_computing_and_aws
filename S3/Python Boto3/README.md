@@ -20,15 +20,17 @@ s3.create_bucket(Bucket="eng84-william-bucket", CreateBucketConfiguration=locati
 ```
 
 ### Uploading files
-To upload a file, you must state the file directory of the file to upload, the bucket and the file name. Keep the first parameter as the file name if the file is in the current directory.
+To upload a file, you must state the file directory of the file to upload, the bucket and the file location in S3. Keep the first parameter as the file name if the file is in the current directory. If the file exists in the bucket file location, it will be overwritten.
 ```python
-s3.meta.client.upload_file("files/WSM-2010-2020.txt", "eng84-william-bucket", "WSM-2010-2020.txt")
+# Parameters: file location in local machine, bucket name, file location in S3 bucket
+s3.meta.client.upload_file("uploadFiles/WSM-2010-2020.txt", "eng84-william-bucket", "WSM-2010-2020.txt")
 ```
 
 ### Downloading files
 To download a file, state the bucket, file name and file directory to save the file in. Keep the directory as the file name if you want to save it in the current directory. If the file already exists in your local machine directory, it will be overwritten.
 ```python
-s3.meta.client.download_file("eng84-william-bucket", "WSM-2010-2020.txt", "files/WSM-2010-2020.txt")
+# Parameters: bucket name, file location in S3 bucket, file location on local machine
+s3.meta.client.download_file("eng84-william-bucket", "WSM-2010-2020.txt", "downloadFiles/WSM-2010-2020.txt")
 ```
 
 ### Deleting files

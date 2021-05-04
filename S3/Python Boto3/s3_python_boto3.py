@@ -13,10 +13,12 @@ def create_bucket():
 # Upload file to bucket
 def upload_file(filename):
     # First param is the file location of the filename
+    # Third param is the file location in the S3 bucket
     s3.meta.client.upload_file(filename, bucket_name, filename)
 
 # Fetch file from S3
 def download_file(filename):
+    # Second param is the file location in the S3 bucket
     # Third param is the file location to save the file
     s3.meta.client.download_file(bucket_name, filename, filename)
 
