@@ -1,11 +1,11 @@
 # Simple Storage Service (S3)
 ## What is S3?
-S3 is provided by AWS and is used to store and retrieve any amount of data, at anytime, from around the world. These are in the form of 'buckets' and you can have any number of buckets. One can control the security access of the bucket and its contents. We can also host our static website on S3. 
+S3 is provided by AWS and is used to store and retrieve any amount of data, at anytime, from around the world. These are in the form of 'buckets' and you can have any number of buckets. One can control the security access of the bucket and its contents. We can also host our static website on S3.
 
 ## Who uses it? 
-* Trello stored images on S3
+* Trello stores images on S3
 * Netflix, Airbnb
-* Social Media platforms (Pintrest)
+* Social media platforms (Pinterest)
 * Globally available service
 
 ## S3 Configurations
@@ -14,7 +14,7 @@ S3 is provided by AWS and is used to store and retrieve any amount of data, at a
   * Python (`sudo apt-get install python`)
   * Pip (`sudo apt-get install pip`)
   * AWSCLI (`sudo apt-get install awscli`)
-* Configure AWSCLI with AWS keys to authenticate the access from our machine to S3
+* Configure AWSCLI with AWS keys to authenticate the access from our machine to an S3 server
   * Enter `aws configure`
   * You will be prompt to enter your:
     * AWS Access Key ID

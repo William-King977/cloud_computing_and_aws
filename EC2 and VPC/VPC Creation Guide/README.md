@@ -183,7 +183,7 @@ Now, lets set the outbound rules.
    * NOTE: All rules should be `Allow` rules
 
 ### Step 10: Assigning Subnets to NACLs
-Finally, lets assign the subnets to the NACL.
+Finally, lets assign the subnets to the NACLs.
 1. Select the **Subnet associations** tab
 2. Select the **Edit subnet associations** tab
 3. Select the public/private subnet, depending on the NACL
