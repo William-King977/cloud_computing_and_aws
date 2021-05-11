@@ -11,8 +11,10 @@ Compared to other cloud services providers:
 * **Most secure** - AWS is architected to be the most flexible and secure cloud computing environment. Their core infrastructure is built to satisfy the security requirements for the military, global banks, and other high-sensitivity organisations.
 
 ## Cloud types
-* **On premises/Private cloud (local machine etc.)** - everything is stored locally. Companies on premise are responsible for the security of the data. If you lose the data, it's gone forever.
+* **On premises/Private cloud (local machine etc.)** - everything is stored locally. Companies on premise are responsible for the security of the data. If you lose the data, it's gone forever. 
 * **Hybrid cloud** - Bridges the private cloud and public cloud. Sensitive information is kept in private cloud, everything else is stored in public cloud. Used by banks etc.
+
+![image](Diagrams/Cloud_Types.png)
 
 ## Cloud scaling types
 * **Autoscaling** - servers run based on the number of users. They scale up as more users use the service and scale down as less users use it.
