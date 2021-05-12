@@ -27,3 +27,36 @@ When all of the servers/instances are run from a single machine. Components of t
 
 ### Two tier
 When the presentation layer (interface) runs on a client and a data layer/structure (database) gets stored on a server. Basically, when each instance is run on a separate machine. It separates these two components into different locations. Having separate layers can improve performance and scalability.
+
+## Load Balancing
+Load Balancing automatically distributes your incoming traffic across multiple targets, such as EC2 instances, containers, and IP addresses, in one or more Availability Zones. It monitors the health of its registered targets, and routes traffic only to the healthy targets.
+
+### Application Load Balancer
+* Operates at the request level, routing traffic to targets (EC2 instances, containers, IP addresses etc.) based on the content of the request
+* Supports path-based routing and can route requests to one or more ports on each container instance cluster
+* Ideal for handling HTTP and HTTPS traffic
+
+### Network Load Balancer
+* Operates at the connection level, routing connections to targets within the VPC, based on IP protocol data 
+* Optimised to handle sudden and volatile traffic patterns while using a single static IP address per Availability Zone
+* Ideal for handling TCP and SSL traffic.
+
+### Classic Load Balancer
+* Provides basic load balancing across multiple EC2 instances
+* Operates at both the request (HTTP/HTTPS) and connection level (TCP/SSL)
+* Intended for applications that are built within the EC2-Classic network.
+
+### Load Balancer Diagram
+![image](Diagrams/Load_Balancer.png)
+
+## Auto Scaling
+AWS Auto Scaling monitors your applications and automatically adjusts capacity to maintain steady, predictable performance at the lowest possible cost.
+
+### Benefits
+* **Maintain performance** - right-size multiple resources to meet application performance
+* **Control costs** - automatically remove unneeded resources to avoid overspending
+* **Simplify scaling** - scaling requires a few steps
+* **Scale predictively** - past application metrics and scale resources ahead of time
+
+### Auto Scaling Diagram
+![image](Diagrams/Auto_Scaling.png)
