@@ -18,8 +18,21 @@ Compared to other cloud services providers:
 
 ## Cloud scaling types
 * **Autoscaling** - servers run based on the number of users. They scale up as more users use the service and scale down as less users use it.
-* **Horizontal (Up)** - increase the size of the servers, or buying a larger server to accommodate the number of users.
-* **Vertical (Out)** - increase number of servers, not good for maintenance costs.
+* **Horizontal (Up)** - increase the size of the servers/buying a larger server to accommodate the number of users.
+* **Vertical (Out)** - increase number of servers with the same configurations. Servers are terminated as demand goes down.
+
+![image](Diagrams/Scaling_Up_Out.png)
+
+## Auto Scaling
+AWS Auto Scaling monitors your applications and automatically adjusts capacity to maintain steady, predictable performance at the lowest possible cost.
+
+### Benefits
+* **Maintain performance** - right-size multiple resources to meet application performance
+* **Control costs** - automatically remove unneeded resources to avoid overspending
+* **Simplify scaling** - scaling requires a few steps
+* **Scale predictively** - past application metrics and scale resources ahead of time
+
+![image](Diagrams/Auto_Scaling.png)
 
 ## Architectures
 ### Monolithic
@@ -46,17 +59,10 @@ Load Balancing automatically distributes your incoming traffic across multiple t
 * Operates at both the request (HTTP/HTTPS) and connection level (TCP/SSL)
 * Intended for applications that are built within the EC2-Classic network.
 
-### Load Balancer Diagram
 ![image](Diagrams/Load_Balancer.png)
 
-## Auto Scaling
-AWS Auto Scaling monitors your applications and automatically adjusts capacity to maintain steady, predictable performance at the lowest possible cost.
+## Route 53
+* Converts a website address (www.website.com) into an IP address (0.0.0.0/0)
+* Communicates with load balancers to distribute traffic
 
-### Benefits
-* **Maintain performance** - right-size multiple resources to meet application performance
-* **Control costs** - automatically remove unneeded resources to avoid overspending
-* **Simplify scaling** - scaling requires a few steps
-* **Scale predictively** - past application metrics and scale resources ahead of time
-
-### Auto Scaling Diagram
-![image](Diagrams/Auto_Scaling.png)
+![image](Diagrams/Route_53.png)
